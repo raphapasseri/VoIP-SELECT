@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos VoIP - Select IT</title>
+    <style>
+        /* ===== RESET BÁSICO ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ===== TOPO ESTILO "SITE" ===== */
+        .topbar {
+            background: #111111;
+            color: #ffffff;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+
+        .topbar-inner,
+        .header-inner,
+        .container {
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .topbar-inner {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .topbar-item {
+            opacity: 0.8;
+        }
+
+        .topbar-item span {
+            font-weight: 500;
+        }
+
+        /* HEADER PRINCIPAL */
+        header {
+            background: #222222;
+            color: #ffffff;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 15px;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            font-size: 14px;
+        }
+
+        nav a {
+            color: #ffffff;
+            opacity: 0.85;
+            transition: opacity .2s;
+        }
+
+        nav a:hover {
+            opacity: 1;
+        }
+
+        /* ===== SEÇÃO PRINCIPAL ===== */
+        main {
+            padding: 40px 0 60px;
+        }
+
+        .page-title {
+            font-size: 26px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        /* GRID PRINCIPAL: PLANOS + RESUMO / FORM */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 960px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        /* ===== TABELA/ LISTA DE PLANOS ===== */
+        .plans-wrapper {
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        .plans-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #ffffff;
+        }
+
+        .plan-row {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .plan-row:last-child {
+            border-bottom: none;
+        }
+
+        .plan-row-main {
+            padding: 10px 12px;
+            background: #f48c8c;
+            color: #222;
+            font-weight: 600;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .plan-row-details {
+            display: none;
+            background: #ffffff;
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .plan-row-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .plan-row-details th,
+        .plan-row-details td {
+            padding: 4px 3px;
+            text-align: left;
+            font-weight: 400;
+        }
+
+        .plan-row-details th {
+            color: #555;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .plan-row.selected .plan-row-main {
+            box-shadow: inset 0 0 0 2px #222;
+        }
+
+        .plan-price-badge {
+            float: right;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* ===== SERVIÇOS ADICIONAIS ===== */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        .service-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            background: #ffffff;
+        }
+
+        .service-row:last-child {
+            border-bottom: none;
+        }
+
+        .service-row input[type="checkbox"] {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #f48c8c;
+        }
+
+        .service-name {
+            flex: 1;
+        }
+
+        .service-price {
+            margin-left: 10px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .quantity-control {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        .quantity-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .quantity-input {
+            width: 40px;
+            padding: 2px 4px;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        .service-row.selected {
+            background: #fff5f5;
+        }
+
+        /* ===== RESUMO ===== */
+        .summary {
+            font-size: 13px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            margin-top: 6px;
+            border-top: 2px solid #f48c8c;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .summary-empty {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            padding: 12px 0;
+        }
+
+        /* ===== FORMULÁRIO ===== */
+        .form-group {
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            padding: 7px 8px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #f48c8c;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .submit-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 3px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f48c8c;
+            color: #fff;
+            transition: background .2s, opacity .2s;
+        }
+
+        .submit-btn:hover {
+            background: #f17070;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ===== MODAL SIMPLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 4px;
+            padding: 20px 24px;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .modal-message {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 18px;
+        }
+
+        .modal-btn {
+            border: none;
+            background: #f48c8c;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra superior simples -->
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="topbar-item"><span>Atendimento:</span> relacionamento@selectit.com.br</div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-inner">
+            <img src="https://static.wixstatic.com/media/ee694b_7c3edd1468254a3a9eecff0131a220cb~mv2.png/v1/fill/w_362,h_160,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logos.png" 
+                 alt="Select IT" class="logo-img">
+            <nav>
+                <a href="#">Empresa</a>
+                <a href="#">Soluções</a>
+                <a href="#">Contato</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main>
+        <div class="container">
+            <h1 class="page-title">Nossos Planos e Serviços VoIP</h1>
+            <p class="page-subtitle">
+                Escolha o plano perfeito para sua empresa e personalize com nossos serviços adicionais.
+            </p>
+
+            <div class="layout-grid">
+                <!-- Coluna Esquerda: Planos + Serviços -->
+                <div>
+                    <!-- Planos -->
+                    <div class="card" style="margin-bottom:18px;">
+                        <div class="card-title">Planos Corporativos</div>
+                        <div class="card-subtitle">
+                            Compare as funcionalidades e encontre a melhor opção para as necessidades de comunicação da sua equipe.
+                        </div>
+
+                        <div class="plans-wrapper" id="plansWrapper">
+                            <div class="loading">Carregando planos...</div>
+                        </div>
+                    </div>
+
+                    <!-- Serviços Adicionais -->
+                    <div class="card">
+                        <div class="card-title">Serviços Adicionais</div>
+                        <div class="card-subtitle">
+                            Aumente a capacidade e personalize sua solução de comunicação com estes add-ons.
+                        </div>
+
+                        <div class="services-list" id="servicesList">
+                            <div class="loading">Carregando serviços...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Resumo + Formulário -->
+                <div>
+                    <div class="card" style="margin-bottom:18px;">
+                        <div class="card-title">Resumo do Pedido</div>
+                        <div class="summary" id="summaryContent">
+                            <div class="summary-empty">
+                                Selecione um plano para começar.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Dados para Contato</div>
+                        <form id="contactForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nome">Nome Completo *</label>
+                                    <input type="text" id="nome" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="empresa">Empresa *</label>
+                                    <input type="text" id="empresa" name="empresa" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">E-mail *</label>
+                                    <input type="email" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="telefone">Telefone *</label>
+                                    <input type="tel" id="telefone" name="telefone" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="observacoes">Observações</label>
+                                <textarea id="observacoes" name="observacoes"></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Enviar solicitação</button>
+
+                            <div class="note">
+                                Todos os planos são livres de fidelidade e possuem a política
+                                de cancelamento de 60 dias de antecedência.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Sucesso -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-title">Solicitação enviada</div>
+            <div class="modal-message">
+                Seu pedido foi preparado no e-mail padrão. Conclua o envio pela sua caixa de correio.
+            </div>
+            <button class="modal-btn" onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de armazenamento de preços (LocalStorage)
+        const STORAGE_KEY = 'selectit_pricing_data';
+
+        // Dados padrão (fallback)
+        const defaultPlans = [
+            {
+                id: 'basic25',
+                name: 'BASIC 25',
+                price: 25.00,
+                features: {
+                    'Ramais': '1',
+                    'Nº Virtual': '1',
+                    'Chamadas Simultâneas': '4',
+                    'Hospedagem': 'Sem',
+                    'URA': '-',
+                    'Softphones': '1'
+                }
+            },
+            {
+                id: 'basic100',
+                name: 'BASIC 100',
+                price: 100.00,
+                features: {
+                    'Ramais': '3',
+                    'Nº Virtual': '1',
+                    'Chamadas Simultâneas': '4',
+                    'Hospedagem': 'Sem',
+                    'URA': '-',
+                    'Softphones': '3'
+                }
+            },
+            {
+                id: 'prime250',
+                name: 'PRIME 250',
+                price: 250.00,
+                features: {
+                    'Ramais': '10',
+                    'Nº Virtual': '1',
+                    'Chamadas Simultâneas': '6',
+                    'Hospedagem': 'PABX Cloud',
+                    'URA': '-',
+                    'Softphones': '10'
+                }
+            },
+            {
+                id: 'prime500',
+                name: 'PRIME 500',
+                price: 500.00,
+                features: {
+                    'Ramais': '20',
+                    'Nº Virtual': '1',
+                    'Chamadas Simultâneas': '8',
+                    'Hospedagem': 'PABX Cloud',
+                    'URA': 'Sim',
+                    'Softphones': '20'
+                }
+            },
+            {
+                id: 'selectinfinity',
+                name: 'SELECT INFINITY',
+                price: 1000.00,
+                features: {
+                    'Ramais': '20',
+                    'Nº Virtual': '1',
+                    'Chamadas Simultâneas': '10',
+                    'Hospedagem': 'PABX Cloud',
+                    'URA': 'Sim',
+                    'Softphones': 'Ilimitados'
+                }
+            }
+        ];
+
+        const defaultServices = [
+            { id: 'selectpbx',    name: 'Select.PBX',                        price: 250.00, allowQuantity: false },
+            { id: 'portabilidade',name: 'Portabilidade',                     price: 100.00, allowQuantity: true, unit: 'número' },
+            { id: 'numerovirtual',name: 'Número Virtual extra',              price: 50.00,  allowQuantity: true, unit: 'número' },
+            { id: 'ura',          name: 'URA Personalizada',                 price: 260.00, allowQuantity: false },
+            { id: 'telefoneip',   name: 'Telefone IP (equipamento)',         price: 400.00, allowQuantity: true, unit: 'unidade' },
+            { id: 'whatsapp',     name: 'Plataforma Multi atendimento WhatsApp', price: 49.90, allowQuantity: true, unit: 'usuário' }
+        ];
+
+        // Carregar dados do LocalStorage ou usar padrão
+        function loadPricingData() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    return {
+                        plans: data.plans || defaultPlans,
+                        services: data.services || defaultServices
+                    };
+                }
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+            }
+            return { plans: defaultPlans, services: defaultServices };
+        }
+
+        const pricingData = loadPricingData();
+        let plans = pricingData.plans;
+        let services = pricingData.services;
+
+        let selectedPlan = null;
+        let selectedServices = {};
+
+        function renderPlans() {
+            const wrapper = document.getElementById('plansWrapper');
+            wrapper.innerHTML = '<div class="plans-header">Plano</div>';
+
+            plans.forEach(plan => {
+                const row = document.createElement('div');
+                row.className = 'plan-row';
+                row.dataset.planId = plan.id;
+
+                row.innerHTML = `
+                    <div class="plan-row-main">
+                        ${plan.name}
+                        <span class="plan-price-badge">R$ ${plan.price.toFixed(2)}/mês</span>
+                    </div>
+                    <div class="plan-row-details">
+                        <table>
+                            <tr>
+                                <th>Ramais</th>
+                                <th>Nº Virtual</th>
+                                <th>Chamadas Simultâneas</th>
+                                <th>Hospedagem</th>
+                                <th>URA</th>
+                                <th>Softphones</th>
+                            </tr>
+                            <tr>
+                                <td>${plan.features['Ramais']}</td>
+                                <td>${plan.features['Nº Virtual']}</td>
+                                <td>${plan.features['Chamadas Simultâneas']}</td>
+                                <td>${plan.features['Hospedagem']}</td>
+                                <td>${plan.features['URA']}</td>
+                                <td>${plan.features['Softphones']}</td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+
+                row.addEventListener('click', () => {
+                    document.querySelectorAll('.plan-row').forEach(r => {
+                        r.classList.remove('selected');
+                        const details = r.querySelector('.plan-row-details');
+                        if (details) details.style.display = 'none';
+                    });
+
+                    row.classList.add('selected');
+                    const details = row.querySelector('.plan-row-details');
+                    if (details) details.style.display = 'block';
+
+                    selectedPlan = plans.find(p => p.id === plan.id);
+                    updateSummary();
+                });
+
+                wrapper.appendChild(row);
+            });
+        }
+
+        function renderServices() {
+            const list = document.getElementById('servicesList');
+            list.innerHTML = '';
+
+            services.forEach(service => {
+                const row = document.createElement('div');
+                row.className = 'service-row';
+                row.id = `service-${service.id}`;
+
+                row.innerHTML = `
+                    <input type="checkbox" id="check-${service.id}">
+                    <div class="service-name">${service.name}</div>
+                    <div class="service-price">R$ ${service.price.toFixed(2)}${service.unit ? ' / ' + service.unit : ''}</div>
+                    ${service.allowQuantity ? `
+                        <div class="quantity-control" id="qty-${service.id}">
+                            <button type="button" class="quantity-btn" data-d="-1">-</button>
+                            <input type="number" class="quantity-input" id="input-${service.id}" value="1" min="1">
+                            <button type="button" class="quantity-btn" data-d="1">+</button>
+                        </div>
+                    ` : ''}
+                `;
+
+                const checkbox = row.querySelector(`#check-${service.id}`);
+                checkbox.addEventListener('change', () => toggleService(service.id));
+
+                if (service.allowQuantity) {
+                    const qtyControl = row.querySelector(`#qty-${service.id}`);
+                    const input = row.querySelector(`#input-${service.id}`);
+                    const btns = qtyControl.querySelectorAll('.quantity-btn');
+
+                    btns.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const delta = parseInt(btn.dataset.d, 10);
+                            let value = parseInt(input.value || '1', 10);
+                            value = Math.max(1, value + delta);
+                            input.value = value;
+                            updateQuantity(service.id);
+                        });
+                    });
+
+                    input.addEventListener('change', () => updateQuantity(service.id));
+                }
+
+                list.appendChild(row);
+            });
+        }
+
+        function toggleService(serviceId) {
+            const checkbox = document.getElementById(`check-${serviceId}`);
+            const row = document.getElementById(`service-${serviceId}`);
+            const qtyControl = document.getElementById(`qty-${serviceId}`);
+
+            if (checkbox.checked) {
+                row.classList.add('selected');
+                selectedServices[serviceId] = { quantity: 1 };
+                if (qtyControl) qtyControl.style.display = 'flex';
+            } else {
+                row.classList.remove('selected');
+                delete selectedServices[serviceId];
+                if (qtyControl) qtyControl.style.display = 'none';
+            }
+            updateSummary();
+        }
+
+        function updateQuantity(serviceId) {
+            const input = document.getElementById(`input-${serviceId}`);
+            let q = parseInt(input.value || '1', 10);
+            q = Math.max(1, q);
+            input.value = q;
+
+            if (selectedServices[serviceId]) {
+                selectedServices[serviceId].quantity = q;
+                updateSummary();
+            }
+        }
+
+        function calculateTotal() {
+            let total = selectedPlan ? selectedPlan.price : 0;
+            Object.entries(selectedServices).forEach(([serviceId, data]) => {
+                const s = services.find(x => x.id === serviceId);
+                total += s.price * data.quantity;
+            });
+            return total;
+        }
+
+        function updateSummary() {
+            const container = document.getElementById('summaryContent');
+
+            if (!selectedPlan) {
+                container.innerHTML = `
+                    <div class="summary-empty">
+                        Selecione um plano para começar.
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="summary-item">
+                    <span><strong>${selectedPlan.name}</strong></span>
+                    <span>R$ ${selectedPlan.price.toFixed(2)}</span>
+                </div>
+            `;
+
+            Object.entries(selectedServices).forEach(([serviceId, data]) => {
+                const s = services.find(x => x.id === serviceId);
+                const subtotal = s.price * data.quantity;
+                html += `
+                    <div class="summary-item">
+                        <span>${s.name}${data.quantity > 1 ? ` (¨D{data.quantity}x)` : ''}</span>
+                        <span>R$ ${subtotal.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="summary-total">
+                    <span>Total mensal estimado</span>
+                    <span>R$ ${calculateTotal().toFixed(2)}</span>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Envio (mailto)
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!selectedPlan) {
+                alert('Selecione um plano antes de enviar.');
+                return;
+            }
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            const servicosTxt = Object.entries(selectedServices).map(([serviceId, info]) => {
+                const s = services.find(x => x.id === serviceId);
+                const subtotal = s.price * info.quantity;
+                return `${s.name} (${info.quantity}x) - R$ ${subtotal.toFixed(2)}`;
+            }).join('\n') || 'Nenhum';
+
+            const total = calculateTotal();
+
+            const emailBody = `
+Nome: ${data.nome}
+Empresa: ${data.empresa}
+E-mail: ${data.email}
+Telefone: ${data.telefone}
+
+PLANO SELECIONADO:
+${selectedPlan.name} - R$ ${selectedPlan.price.toFixed(2)}/mês
+
+SERVIÇOS ADICIONAIS:
+${servicosTxt}
+
+VALOR TOTAL MENSAL ESTIMADO: R$ ${total.toFixed(2)}
+
+OBSERVAÇÕES:
+${data.observacoes || 'Nenhuma'}
+            `.trim();
+
+            const subject = encodeURIComponent(`Solicitação de Plano VoIP - ${data.empresa}`);
+            const body = encodeURIComponent(emailBody);
+
+            window.location.href = `mailto:relacionamento@selectit.com.br?subject=${subject}&body=${body}`;
+
+            setTimeout(() => {
+                document.getElementById('successModal').classList.add('active');
+            }, 600);
+        });
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        // Inicialização
+        renderPlans();
+        renderServices();
+    </script>
+</body>
+</html>

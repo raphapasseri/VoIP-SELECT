@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Preços - Select IT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #222;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f48c8c;
+            color: #333;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #e0e0e0;
+        }
+
+        .price-table th {
+            background: #f8f8f8;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .price-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        .price-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .price-table input[type="number"] {
+            width: 120px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .price-table input[type="number"]:focus {
+            outline: none;
+            border-color: #f48c8c;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #f48c8c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #f17070;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .modal-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Painel de Atualização de Preços</h1>
+            <p>Gerencie os preços dos planos e serviços VoIP</p>
+        </div>
+
+        <div class="content">
+            <div class="alert alert-info">
+                <strong>ℹ️ Informação:</strong> As alterações são salvas localmente no navegador e refletirão imediatamente na página de planos.
+            </div>
+
+            <div id="successMessage" class="alert alert-success" style="display: none;">
+                <strong>✅ Sucesso!</strong> Preços atualizados com sucesso!
+            </div>
+
+            <!-- Planos -->
+            <div class="section">
+                <h2 class="section-title">Planos Corporativos</h2>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>Plano</th>
+                            <th>Preço Atual (R$)</th>
+                            <th>Novo Preço (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="plansTableBody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Serviços -->
+            <div class="section">
+                <h2 class="section-title">Serviços Adicionais</h2>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Preço Atual (R$)</th>
+                            <th>Novo Preço (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTableBody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Botões -->
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveChanges()">💾 Salvar Alterações</button>
+                <button class="btn btn-secondary" onclick="resetToDefault()">🔄 Restaurar Padrão</button>
+                <button class="btn btn-secondary" onclick="window.location.href='planos-selectit.html'">← Voltar para Planos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-title">⚠️ Confirmar Ação</div>
+            <div class="modal-message" id="modalMessage"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-danger" onclick="confirmAction()">Confirmar</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'selectit_pricing_data';
+        let pendingAction = null;
+
+        // Dados padrão
+        const defaultPlans = [
+            { id: 'basic25', name: 'BASIC 25', price: 25.00, features: { 'Ramais': '1', 'Nº Virtual': '1', 'Chamadas Simultâneas': '4', 'Hospedagem': 'Sem', 'URA': '-', 'Softphones': '1' }},
+            { id: 'basic100', name: 'BASIC 100', price: 100.00, features: { 'Ramais': '3', 'Nº Virtual': '1', 'Chamadas Simultâneas': '4', 'Hospedagem': 'Sem', 'URA': '-', 'Softphones': '3' }},
+            { id: 'prime250', name: 'PRIME 250', price: 250.00, features: { 'Ramais': '10', 'Nº Virtual': '1', 'Chamadas Simultâneas': '6', 'Hospedagem': 'PABX Cloud', 'URA': '-', 'Softphones': '10' }},
+            { id: 'prime500', name: 'PRIME 500', price: 500.00, features: { 'Ramais': '20', 'Nº Virtual': '1', 'Chamadas Simultâneas': '8', 'Hospedagem': 'PABX Cloud', 'URA': 'Sim', 'Softphones': '20' }},
+            { id: 'selectinfinity', name: 'SELECT INFINITY', price: 1000.00, features: { 'Ramais': '20', 'Nº Virtual': '1', 'Chamadas Simultâneas': '10', 'Hospedagem': 'PABX Cloud', 'URA': 'Sim', 'Softphones': 'Ilimitados' }}
+        ];
+
+        const defaultServices = [
+            { id: 'selectpbx', name: 'Select.PBX', price: 250.00, allowQuantity: false },
+            { id: 'portabilidade', name: 'Portabilidade', price: 100.00, allowQuantity: true, unit: 'número' },
+            { id: 'numerovirtual', name: 'Número Virtual extra', price: 50.00, allowQuantity: true, unit: 'número' },
+            { id: 'ura', name: 'URA Personalizada', price: 260.00, allowQuantity: false },
+            { id: 'telefoneip', name: 'Telefone IP (equipamento)', price: 400.00, allowQuantity: true, unit: 'unidade' },
+            { id: 'whatsapp', name: 'Plataforma Multi atendimento WhatsApp', price: 49.90, allowQuantity: true, unit: 'usuário' }
+        ];
+
+        // Carregar dados
+        function loadData() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    return {
+                        plans: data.plans || defaultPlans,
+                        services: data.services || defaultServices
+                    };
+                }
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+            }
+            return { plans: [...defaultPlans], services: [...defaultServices] };
+        }
+
+        let currentData = loadData();
+
+        // Renderizar tabelas
+        function renderTables() {
+            const plansBody = document.getElementById('plansTableBody');
+            const servicesBody = document.getElementById('servicesTableBody');
+
+            plansBody.innerHTML = currentData.plans.map(plan => `
+                <tr>
+                    <td><strong>${plan.name}</strong></td>
+                    <td>R$ ${plan.price.toFixed(2)}</td>
+                    <td>
+                        <input type="number" 
+                               id="plan-${plan.id}" 
+                               value="${plan.price.toFixed(2)}" 
+                               step="0.01" 
+                               min="0">
+                    </td>
+                </tr>
+            `).join('');
+
+            servicesBody.innerHTML = currentData.services.map(service => `
+                <tr>
+                    <td><strong>${service.name}</strong></td>
+                    <td>R$ ${service.price.toFixed(2)}</td>
+                    <td>
+                        <input type="number" 
+                               id="service-${service.id}" 
+                               value="${service.price.toFixed(2)}" 
+                               step="0.01" 
+                               min="0">
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Salvar alterações
+        function saveChanges() {
+            const updatedPlans = currentData.plans.map(plan => {
+                const input = document.getElementById(`plan-${plan.id}`);
+                return {
+                    ...plan,
+                    price: parseFloat(input.value) || plan.price
+                };
+            });
+
+            const updatedServices = currentData.services.map(service => {
+                const input = document.getElementById(`service-${service.id}`);
+                return {
+                    ...service,
+                    price: parseFloat(input.value) || service.price
+                };
+            });
+
+            const newData = {
+                plans: updatedPlans,
+                services: updatedServices
+            };
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+            currentData = newData;
+
+            showSuccess();
+            renderTables();
+        }
+
+        // Restaurar padrão
+        function resetToDefault() {
+            document.getElementById('modalMessage').textContent = 
+                'Tem certeza que deseja restaurar todos os preços para os valores padrão? Esta ação não pode ser desfeita.';
+            pendingAction = 'reset';
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function confirmAction() {
+            if (pendingAction === 'reset') {
+                localStorage.removeItem(STORAGE_KEY);
+                currentData = { plans: [...defaultPlans], services: [...defaultServices] };
+                renderTables();
+                showSuccess();
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            pendingAction = null;
+        }
+
+        function showSuccess() {
+            const msg = document.getElementById('successMessage');
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        // Inicializar
+        renderTables();
+    </script>
+</body>
+</html>
